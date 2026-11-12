@@ -3,9 +3,8 @@
 //   2. Groq Llama-4 → fast STT correction only (callsigns, numbers, phonetics)
 //      Mistral Large handles speaker identification, splitting, and flagging.
 
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
-const GROQ_WHISPER_URL = 'https://api.groq.com/openai/v1/audio/transcriptions';
-const GROQ_CHAT_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_WHISPER_URL = '/api/groq/audio/transcriptions';
+const GROQ_CHAT_URL = '/api/groq/chat/completions';
 
 export interface TranscriptionResult {
   text: string;
@@ -15,6 +14,10 @@ export interface TranscriptionResult {
 
 // ─── Airport context registry ─────────────────────────────────────────────────
 export const AIRPORT_CONTEXTS: Record<string, string> = {
+  KDVT: `Phoenix Deer Valley Airport (KDVT), Phoenix Arizona USA.
+Runways: 7L, 7R, 12L, 25L, 25R, 30R.
+Standard ATC radio communications for the Phoenix area.`,
+
   KAUS: `Austin-Bergstrom International Airport (KAUS), Austin Texas USA.
 Runways: 17L, 17R, 35L, 35R. Taxiways Alpha, Bravo, Charlie, Delta, Echo.
 Frequencies: Tower 118.9, Approach 119.0, Departure 125.35, Ground 121.9, ATIS 135.9.
@@ -73,7 +76,6 @@ Uniform, Victor, Whiskey, Xray, Yankee, Zulu`
 
   const response = await fetch(GROQ_WHISPER_URL, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${GROQ_API_KEY}` },
     body: formData,
   });
 
@@ -222,7 +224,6 @@ export async function refineTranscriptionWithGroq(
     const response = await fetch(GROQ_CHAT_URL, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${GROQ_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -374,7 +375,6 @@ STRICT CORRECTION RULES:
     const response = await fetch(GROQ_CHAT_URL, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${GROQ_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

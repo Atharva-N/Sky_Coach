@@ -9,6 +9,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 
 // Airport options (ICAO + LiveATC stream URL)
 const AIRPORTS = [
+  { id: 'KDVT', label: '🇺🇸 KDVT — Phoenix Deer Valley', streamUrl: 'https://d.liveatc.net/kdvt3_twr1' },
   { id: 'KAUS', label: '🇺🇸 KAUS — Austin', streamUrl: 'https://s1-bos.liveatc.net/kaus3_app_dep' },
   { id: 'WSSS', label: '🇸🇬 WSSS — Singapore', streamUrl: 'https://s1-bos.liveatc.net/wsss3' },
   { id: 'EHAM', label: '🇳🇱 EHAM — Amsterdam', streamUrl: 'https://s1-bos.liveatc.net/eham_app_119055' },
@@ -16,25 +17,6 @@ const AIRPORTS = [
 ];
 
 // ─── Utility ──────────────────────────────────────────────────────────────────
-function getCurrentISTInitialAirport() {
-  const now = new Date();
-  // UTC time
-  const utcHours = now.getUTCHours();
-  const utcMinutes = now.getUTCMinutes();
-  
-  // IST is UTC + 5:30
-  let istMinutes = utcMinutes + 30;
-  let istHours = utcHours + 5 + Math.floor(istMinutes / 60);
-  istMinutes %= 60;
-  istHours %= 24;
-
-  // 8 AM IST (8) to 8 PM IST (20)
-  const isDaytimeIST = istHours >= 8 && istHours < 20;
-  
-  // Melbourne is AIRPORTS[3], KAUS is AIRPORTS[0]
-  return isDaytimeIST ? AIRPORTS[3] : AIRPORTS[0];
-}
-
 function confidenceClass(conf: number): string {
   if (conf >= 75) return 'conf-high';
   if (conf >= 45) return 'conf-medium';
@@ -87,7 +69,7 @@ export default function LiveATC() {
   const [stats, setStats] = useState({ total: 0, flags: 0, avgConf: 0, towerCount: 0, pilotCount: 0 });
   const [filterSpeaker, setFilterSpeaker] = useState<string>('ALL');
   const [error, setError] = useState<string | null>(null);
-  const [selectedAirport, setSelectedAirport] = useState(getCurrentISTInitialAirport());
+  const [selectedAirport, setSelectedAirport] = useState(AIRPORTS[0]);
 
   const captureRef = useRef<ATCStreamCapture | null>(null);
   const feedRef = useRef<HTMLDivElement>(null);

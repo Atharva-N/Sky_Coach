@@ -1,8 +1,7 @@
 // Simulator Engine
 // Manages ATC training sessions using Groq LLM with strict aviation format
 
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
-const GROQ_CHAT_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_CHAT_URL = '/api/groq/chat/completions';
 
 export type Situation =
   | 'parked' | 'pushback' | 'taxi_out' | 'departure' | 'climb'
@@ -265,7 +264,6 @@ export async function getATCResponse(
   const response = await fetch(GROQ_CHAT_URL, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${GROQ_API_KEY}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -343,7 +341,6 @@ export async function generateNextExchange(
     const response = await fetch(GROQ_CHAT_URL, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${GROQ_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -389,7 +386,6 @@ export async function validateReadback(
     const response = await fetch(GROQ_CHAT_URL, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${GROQ_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
